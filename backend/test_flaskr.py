@@ -40,10 +40,23 @@ class TriviaTestCase(unittest.TestCase):
         body = json.loads(res.data)
         self.assertEqual(body, self.categories)
         self.assertEqual(res.status_code, 200)
-    """
-    TODO
-    Write at least one test for each test for successful operation and for expected errors.
-    """
+
+    def test_get_paginated_questions(self):
+        res = self.client().get('/questions?page=1')
+        body = json.loads(res.data)
+        questions = [question.format() for question in Question.query.all()]
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(body['questions'], questions[:10])
+        self.assertEqual(body['total_questions'], len(questions))
+        self.assertEqual(body['categories'], self.categories)
+        # empty as not implemented
+        self.assertEqual(body['current_category'], {})
+
+    def test_404_if_page_not_found(self):
+        impossible_page = len(Question.query.all()) + 1
+        res = self.client().get(f'/questions?page={impossible_page}')
+        self.assertEqual(res.status_code, 404)
 
 
 # Make the tests conveniently executable
