@@ -18,6 +18,12 @@ class TriviaTestCase(unittest.TestCase):
         self.database_path = "postgres://{}/{}".format('localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
 
+        # from list of Category objects via .all(), to dict with items like 'id':'type'
+        # as the categories don't change we define here, to save space
+        # BUG POTENTIAL if categories were changed during testing
+        categories_list = [category.format() for category in Category.query.all()]
+        self.categories = {item['id']: item['type'] for item in categories_list}
+
         # binds the app to the current context
         with self.app.app_context():
             self.db = SQLAlchemy()
