@@ -58,6 +58,24 @@ class TriviaTestCase(unittest.TestCase):
         res = self.client().get(f'/questions?page={impossible_page}')
         self.assertEqual(res.status_code, 404)
 
+    def test_get_question_by_category(self):
+        # selecting first valid id
+        category_id = list(self.categories.keys())[0]
+        res = self.client().get(f'/categories/{category_id}/questions')
+        body = json.loads(res.data)
+
+        questions_by_category = [question.format() for question in Question.query.filter_by(category=category_id).all()]
+
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(body['questions'], questions_by_category)
+        self.assertEqual(body['total_questions'], len(Question.query.all()))
+        self.assertEqual(body['current_category'], {})
+
+    def test_404_if_category_not_found(self):
+        impossible_category = 999999
+        res = self.client().get(f'/categories/{impossible_category}/questions')
+        self.assertEqual(res.status_code, 404)
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
