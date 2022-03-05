@@ -8,6 +8,14 @@ from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
+
+def paginate_questions(questions: list, page: int):
+    start = (page - 1) * QUESTIONS_PER_PAGE
+    end = start + QUESTIONS_PER_PAGE
+    selection = [question.format() for question in questions[start:end]]
+    return selection
+
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
