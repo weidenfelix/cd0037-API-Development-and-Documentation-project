@@ -76,6 +76,39 @@ class TriviaTestCase(unittest.TestCase):
         res = self.client().get(f'/categories/{impossible_category}/questions')
         self.assertEqual(res.status_code, 404)
 
+    # POST SEARCH
+    def test_search_for_existing(self):
+        search_object = Question.query.first().format()
+        search_term = search_object['question']
+        res = self.client().post('/questions/search', json={
+            'searchTerm': search_term
+        })
+        body = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(body['questions'], [search_object])
+        self.assertEqual(body['total_questions'], len(Question.query.all()))
+        self.assertEqual(body['current_category'], {})
+
+    def test_search_for_not_existing(self):
+        search_term = 'qqqqqqqqq'
+        res = self.client().post('/questions/search', json={
+            'searchTerm': search_term
+        })
+        body = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+        # response should be empty
+        self.assertEqual(body['questions'], [])
+        self.assertEqual(body['total_questions'], len(Question.query.all()))
+        self.assertEqual(body['current_category'], {})
+
+    def test_422_if_bad_search(self):
+        res = self.client().post('questions/search', json={
+            'wrongSearch': 'o.o'
+        })
+        self.assertEqual(res.status_code, 422)
+
+
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
