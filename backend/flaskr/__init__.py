@@ -93,22 +93,23 @@ def create_app(test_config=None):
     This removal will persist in the database and when you refresh the page.
     """
 
-    """
-    @TODO:
-    Create an endpoint to POST a new question,
-    which will require the question and answer text,
-    category, and difficulty score.
-
-    TEST: When you submit a question on the "Add" tab,
-    the form will clear and the question will appear at the end of the last page
-    of the questions list in the "List" tab.
-    """
-
-    """
-    @TODO:
-    Create a POST endpoint to get questions based on a search term.
-    It should return any questions for whom the search term
-    is a substring of the question.
+    @app.route('/questions/<int:question_id>', methods=['DELETE'])
+    def delete_question(question_id):
+        try:
+            question = Question.query.get(question_id)
+            db.session.delete(question)
+            db.session.commit()
+        except:
+            if question is None:
+                abort(404)
+            db.session.rollback()
+            print(sys.exc_info())
+            abort(500)
+        finally:
+            db.session.close()
+        return jsonify({
+            'success': True
+        })
 
     @app.route('/questions/search', methods=['POST'])
     def search_for_question():

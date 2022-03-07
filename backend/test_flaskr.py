@@ -109,7 +109,18 @@ class TriviaTestCase(unittest.TestCase):
 
 
 
+    # DELETE QUESTION
+    def test_delete_question(self):
+        # delete from behind
+        question_id = Question.query.order_by('id').all()[-1].format()['id']
+        res = self.client().delete(f'/questions/{question_id}')
+        self.assertEqual(res.status_code, 200)
+        self.assertFalse(Question.query.get(question_id))
 
+    def test_404_if_question_not_found(self):
+        question_id = 9999999
+        res = self.client().delete(f'/questions/{question_id}')
+        self.assertEqual(res.status_code, 404)
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()
