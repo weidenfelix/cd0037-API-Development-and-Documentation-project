@@ -107,7 +107,27 @@ class TriviaTestCase(unittest.TestCase):
         })
         self.assertEqual(res.status_code, 422)
 
+    # POST ADD QUESTION
+    def test_add_question(self):
+        total_questions = len(Question.query.all())
+        res = self.client().post('/questions', json={
+            'question': 'What does the fox say?',
+            'answer': 'Ring-ding-ding-ding',
+            'category': 5,
+            'difficulty': 5
+        })
+        added_question = len(Question.query.filter_by(question='What does the fox say?').all())
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(len(Question.query.all()), total_questions + 1)
+        self.assertTrue(added_question)
 
+    def test_422_if_bad_question(self):
+        res = self.client().post('/questions', json={
+            'question': 'What does the fox say?',
+            'answer': 'Ring-ding-ding-ding',
+            'difficulty': 5
+        })
+        self.assertEqual(res.status_code, 422)
 
     # DELETE QUESTION
     def test_delete_question(self):
