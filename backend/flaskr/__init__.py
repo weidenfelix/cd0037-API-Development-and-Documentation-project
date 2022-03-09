@@ -152,17 +152,30 @@ def create_app(test_config=None):
             'current_category': current_category
         })
 
-    """
-    @TODO:
-    Create a POST endpoint to get questions to play the quiz.
-    This endpoint should take category and previous question parameters
-    and return a random questions within the given category,
-    if provided, and that is not one of the previous questions.
-
-    TEST: In the "Play" tab, after a user selects "All" or a category,
-    one question at a time is displayed, the user is allowed to answer
-    and shown whether they were correct or not.
-    """
+    @app.route('/quizzes', methods=['POST'])
+    def get_questions_for_quiz():
+        body = get_and_validate_json()
+        if not all(k in body for k in ('previous_questions', 'quiz_category')):
+            abort(422)
+        quiz_category_id = body['quiz_category']['id']
+        questions_by_category = [question.format() for question in
+                                 Question.query.filter_by(category=quiz_category_id).all()]
+        # get respective question_ids for all questions and already asked questions
+        # as set to use set.difference afterwards
+        questions_by_category_ids = set([q['id'] for q in questions_by_category])
+        previous_questions_ids = set(body['previous_questions'])
+        # get ids of questions, that haven't been asked yet
+        open_questions_ids = questions_by_category_ids.difference(previous_questions_ids)
+        # the anonymous function checks if the question's id is in the open_questions and if True,
+        # filter yields it and then we turn the result into list
+        open_questions = list(filter(lambda q: q['id'] in open_questions_ids, questions_by_category))
+        if open_questions:
+            open_question = random.choice(open_questions)
+        else:
+            open_question = False
+        return jsonify({
+            'question': open_question
+        })
 
     @app.errorhandler(400)
     def bad_request(error):

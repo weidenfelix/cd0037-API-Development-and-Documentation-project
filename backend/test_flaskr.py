@@ -141,6 +141,33 @@ class TriviaTestCase(unittest.TestCase):
         question_id = 9999999
         res = self.client().delete(f'/questions/{question_id}')
         self.assertEqual(res.status_code, 404)
+
+    # POST QUIZ
+    def test_select_question_for_quiz(self):
+        questions_by_category = [question.format() for question in
+                                 Question.query.filter_by(category='1').all()]
+        res = self.client().post('/quizzes', json={
+            'previous_questions': [],
+            'quiz_category': {'type': 'Science', 'id': '1'}
+        })
+        body = json.loads(res.data)
+        next_question = body['question']
+        self.assertEqual(res.status_code, 200)
+        self.assertIn(next_question, questions_by_category)
+
+    def test_return_empty_if_previous_questions_full(self):
+        questions_by_category_ids = [question.format()['id'] for question in
+                                     Question.query.filter_by(category='1').all()]
+        res = self.client().post('/quizzes', json={
+            'previous_questions': questions_by_category_ids,
+            'quiz_category': {'type': 'Science', 'id': 1}
+        })
+        body = json.loads(res.data)
+        next_question = body['question']
+        self.assertEqual(res.status_code, 200)
+        self.assertFalse(next_question)
+
+
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()
