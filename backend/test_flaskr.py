@@ -1,4 +1,3 @@
-import os
 import unittest
 import json
 from flask_sqlalchemy import SQLAlchemy
@@ -30,17 +29,19 @@ class TriviaTestCase(unittest.TestCase):
             self.db.init_app(self.app)
             # create all tables
             self.db.create_all()
-    
+
     def tearDown(self):
-        """Executed after reach test"""
+        """Executed after each test"""
         pass
 
+    # GET CATEGORIES
     def test_get_categories(self):
         res = self.client().get('/categories')
         body = json.loads(res.data)
         self.assertEqual(body, self.categories)
         self.assertEqual(res.status_code, 200)
 
+    # GET QUESTIONS
     def test_get_paginated_questions(self):
         res = self.client().get('/questions?page=1')
         body = json.loads(res.data)
@@ -58,6 +59,7 @@ class TriviaTestCase(unittest.TestCase):
         res = self.client().get(f'/questions?page={impossible_page}')
         self.assertEqual(res.status_code, 404)
 
+    # GET QUESTION BY CATEGORY
     def test_get_question_by_category(self):
         # selecting first valid id
         category_id = list(self.categories.keys())[0]
