@@ -16,6 +16,13 @@ def paginate_questions(questions: list, page: int):
     return selection
 
 
+def get_and_validate_json():
+    body = request.get_json()
+    if not body:
+        abort(400)
+    return body
+
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
@@ -87,7 +94,7 @@ def create_app(test_config=None):
 
     @app.route('/questions', methods=['POST'])
     def add_new_question():
-        body = request.get_json()
+        body = get_and_validate_json()
         question_elements = ['question', 'answer', 'category', 'difficulty']
         if not all(key in body for key in question_elements):
             abort(422)
@@ -126,7 +133,7 @@ def create_app(test_config=None):
 
     @app.route('/questions/search', methods=['POST'])
     def search_for_question():
-        body = request.get_json()
+        body = get_and_validate_json()
         if 'searchTerm' not in body:
             abort(422)
         search_term = body['searchTerm']
