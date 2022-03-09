@@ -57,10 +57,12 @@ All tests are kept in that file and should be maintained as updates are made to 
 
 Errors are returned as JSON, like this:
 
->{  
+```
+{  
 'error': 404,
 'message' 'resource not found'
 }	
+```
 
 You can expect:
 -	*400 bad request* if there is no JSON in the request body, when required
@@ -74,7 +76,8 @@ You can expect:
 -	Example:
 
 	`curl http://localhost:5000/categories`
->{
+```
+{
   "1": "Science", 
   "2": "Art", 
   "3": "Geography", 
@@ -82,6 +85,7 @@ You can expect:
   "5": "Entertainment", 
   "6": "Sports"
 }
+```
 
 **GET /questions?page=int** 
 -	Returns a dictionary, with keys:
@@ -94,35 +98,38 @@ You can expect:
 -	Example (shortened from 10 questions):
 
 	`curl http://localhost:5000/questions?page=2`
-> {
->   "categories": {
->     "1": "Science", 
->     "2": "Art", 
->     "3": "Geography", 
->     "4": "History", 
->     "5": "Entertainment", 
->     "6": "Sports"
->   }, 
->   "current_category": {}, 
->   "questions": [
->     {
->       "answer": "Agra", 
->       "category": 3, 
->       "difficulty": 2, 
->       "id": 15, 
->       "question": "The Taj Mahal is located in which Indian city?"
->     }, 
->     {
->       "answer": "Escher", 
->       "category": 2, 
->       "difficulty": 1, 
->       "id": 16, 
->       "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
->     },  
->     {...}
->   ], 
->   "total_questions": 20
-> } 
+	
+```
+{
+  "categories": {
+    "1": "Science", 
+    "2": "Art", 
+    "3": "Geography", 
+    "4": "History", 
+    "5": "Entertainment", 
+    "6": "Sports"
+  }, 
+  "current_category": {}, 
+  "questions": [
+    {
+      "answer": "Agra", 
+      "category": 3, 
+      "difficulty": 2, 
+      "id": 15, 
+      "question": "The Taj Mahal is located in which Indian city?"
+    }, 
+    {
+      "answer": "Escher", 
+      "category": 2, 
+      "difficulty": 1, 
+      "id": 16, 
+      "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
+    },  
+    {...}
+  ], 
+  "total_questions": 20
+} 
+```
 
 **GET /categories/<int: category_id>/questions** 
 
@@ -130,97 +137,117 @@ You can expect:
 -	Example:
 
 	`curl http://localhost:5000/categories/3/questions`
-> {
->   "current_category": {}, 
->   "questions": [
->     {
->       "answer": "Lake Victoria", 
->       "category": 3, 
->       "difficulty": 2, 
->       "id": 13, 
->       "question": "What is the largest lake in Africa?"
->     }, 
->     {
->       "answer": "The Palace of Versailles", 
->       "category": 3, 
->       "difficulty": 3, 
->       "id": 14, 
->       "question": "In which royal palace would you find the Hall of Mirrors?"
->     }, 
->     {
->       "answer": "Agra", 
->       "category": 3, 
->       "difficulty": 2, 
->       "id": 15, 
->       "question": "The Taj Mahal is located in which Indian city?"
->     }
->   ], 
->   "total_questions": 20
-> }
+
+```
+{
+  "current_category": {}, 
+  "questions": [
+    {
+      "answer": "Lake Victoria", 
+      "category": 3, 
+      "difficulty": 2, 
+      "id": 13, 
+      "question": "What is the largest lake in Africa?"
+    }, 
+    {
+      "answer": "The Palace of Versailles", 
+      "category": 3, 
+      "difficulty": 3, 
+      "id": 14, 
+      "question": "In which royal palace would you find the Hall of Mirrors?"
+    }, 
+    {
+      "answer": "Agra", 
+      "category": 3, 
+      "difficulty": 2, 
+      "id": 15, 
+      "question": "The Taj Mahal is located in which Indian city?"
+    }
+  ], 
+  "total_questions": 20
+}
+```
 
 
 **POST /questions/search** 
 -	Searches through the 'question' of each question object and returns a list of case-insensitive matches or empty if none found.
 -	Accepts JSON:
-> {
-> 	'searchTerm': str
-> }
+
+```
+{
+	'searchTerm': str
+}
+```
 
 -	Example:
 
 	`curl -X POST -H 'Content-Type: application/json' http://localhost:5000/questions/search -d '{"searchTerm": "which dung beetle"}'`
-> {
->   "current_category": {}, 
->   "questions": [
->     {
->       "answer": "Scarab", 
->       "category": 4, 
->       "difficulty": 4, 
->       "id": 23, 
->       "question": "Which dung beetle was worshipped by the ancient Egyptians?"
->     }
->   ], 
->   "total_questions": 20
-> }
+	
+```
+{
+  "current_category": {}, 
+  "questions": [
+    {
+      "answer": "Scarab", 
+      "category": 4, 
+      "difficulty": 4, 
+      "id": 23, 
+      "question": "Which dung beetle was worshipped by the ancient Egyptians?"
+    }
+  ], 
+  "total_questions": 20
+}
+```
 
 **POST /questions** 
 -	Adds a new question to the database, with required keys as follows.
 -	Accepts JSON:
-> {
-> 	'question': str,
-> 	'answer': str,
-> 	'category': int,
-> 	'difficulty': int
-> }
+
+```
+{
+	'question': str,
+	'answer': str,
+	'category': int,
+	'difficulty': int
+}
+```
 
 -	Example:
 
 	`curl -X POST -H 'Content-Type: application/json' http://localhost:5000/questions -d '{"question": "What does the fox say?", "answer": "ring-ding-ding", "category": 1, "difficulty": 5}'`
-> {
->   "success": true
-> }
+
+```
+{
+  "success": true
+}
+```
 
 **POST /quizzes** 
 -	Takes a list of previous question ids as well as a dict of quiz_category type and id, then returns a random unasked question object.
 -	Accepts JSON:
-> {
-> 	'previous_questions': list of ints,
-> 	'quiz_category': {'type': str, 'id': int}
-> }
+
+```
+{
+	'previous_questions': list of ints,
+	'quiz_category': {'type': str, 'id': int}
+}
+```
 
 -	Example:
 
 	`curl -X POST -H 'Content-Type: application/json' http://localhost:5000/quizzes -d '{"previous_questions": [23, 22], "quiz_category": {"type": "Science", "id": 1}}'`
-> {
->   "question": {
->     "answer": "The Liver", 
->     "category": 1, 
->     "difficulty": 4, 
->     "id": 20, 
->     "question": "What is the heaviest organ in the human body?"
->   }
-> }
-
+	
+```
+{
+  "question": {
+    "answer": "The Liver", 
+    "category": 1, 
+    "difficulty": 4, 
+    "id": 20, 
+    "question": "What is the heaviest organ in the human body?"
+  }
+}
+```
 
 **DELETE /questions/<int: question_id>** 
 -	Deletes a question from the database by its id.
@@ -229,9 +256,12 @@ You can expect:
 -	Example:
 
 	`curl -X DELETE -H 'Content-Type: application/json' http://localhost:5000/questions/23`
-> {
->   "success": true
-> }
+	
+```
+{
+  "success": true
+}
+```
 	
 ### Authors
 Felix Weidenholzer
