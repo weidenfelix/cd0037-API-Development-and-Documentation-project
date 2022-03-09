@@ -1,49 +1,240 @@
-# API Development and Documentation Final Project
+# THE TRIVIA API
+This project is a Trivia application, that stores questions and generates quizzes. The API serves its client different representations of questions, can create and delete them and choose unasked questions, as to make quizzing not repetitive. This is the second project of the Fullstack Nanodegree at Udacity, with its focus on flask, TDD and endpointing.
 
-## Trivia App
+All backend code follows PEP8 style guidelines.
 
-Udacity is invested in creating bonding experiences for its employees and students. A bunch of team members got the idea to hold trivia on a regular basis and created a webpage to manage the trivia app and play the game, but their API experience is limited and still needs to be built out.
+### Pre-requisites and Local Development
 
-That's where you come in! Help them finish the trivia app so they can start holding trivia and seeing who's the most knowledgeable of the bunch. The application must:
-
-1. Display questions - both all questions and by category. Questions should show the question, category and difficulty rating by default and can show/hide the answer.
-2. Delete questions.
-3. Add questions and require that they include question and answer text.
-4. Search for questions based on a text query string.
-5. Play the quiz game, randomizing either all questions or within a specific category.
-
-Completing this trivia app will give you the ability to structure plan, implement, and test an API - skills essential for enabling your future applications to communicate with others.
-
-## Starting and Submitting the Project
-
-[Fork](https://help.github.com/en/articles/fork-a-repo) the project repository and [clone](https://help.github.com/en/articles/cloning-a-repository) your forked repository to your machine. Work on the project locally and make sure to push all your changes to the remote repository before submitting the link to your repository in the Classroom.
-
-## About the Stack
-
-We started the full stack application for you. It is designed with some key functional areas:
+Developers using this project should already have Python3, pip and node installed on their local machines.
 
 ### Backend
 
-The [backend](./backend/README.md) directory contains a partially completed Flask and SQLAlchemy server. You will work primarily in `__init__.py` to define your endpoints and can reference models.py for DB and SQLAlchemy setup. These are the files you'd want to edit in the backend:
+From the backend folder run `pip install requirements.txt`. All required packages are included in the requirements file.
 
-1. `backend/flaskr/__init__.py`
-2. `backend/test_flaskr.py`
+To run the application run the following commands:
 
-> View the [Backend README](./backend/README.md) for more details.
+```
+export FLASK_APP=flaskr
+export FLASK_ENV=development
+flask run
+```
 
-### Frontend
+These commands put the application in development and directs our application to use the `__init__.py` file in our flaskr folder. Working in development mode shows an interactive debugger in the console and restarts the server whenever changes are made. If running locally on Windows, look for the commands in the [Flask documentation](http://flask.pocoo.org/docs/1.0/tutorial/factory/).
 
-The [frontend](./frontend/README.md) directory contains a complete React frontend to consume the data from the Flask server. If you have prior experience building a frontend application, you should feel free to edit the endpoints as you see fit for the backend you design. If you do not have prior experience building a frontend application, you should read through the frontend code before starting and make notes regarding:
+The application is run on `http://127.0.0.1:5000/` by default and is a proxy in the frontend configuration.
 
-1. What are the end points and HTTP methods the frontend is expecting to consume?
-2. How are the requests from the frontend formatted? Are they expecting certain parameters or payloads?
+#### Frontend
 
-Pay special attention to what data the frontend is expecting from each API response to help guide how you format your API. The places where you may change the frontend behavior, and where you should be looking for the above information, are marked with `TODO`. These are the files you'd want to edit in the frontend:
+From the frontend folder, run the following commands to start the client:
 
-1. `frontend/src/components/QuestionView.js`
-2. `frontend/src/components/FormView.js`
-3. `frontend/src/components/QuizView.js`
+```
+npm install // only once to install dependencies
+npm start 
+```
 
-By making notes ahead of time, you will practice the core skill of being able to read and understand code and will have a simple plan to follow to build out the endpoints of your backend API.
+By default, the frontend will run on localhost:3000.
 
-> View the [Frontend README](./frontend/README.md) for more details.
+### Tests
+
+In order to run tests navigate to the backend folder and run the following commands:
+
+```
+createdb bookshelf_test
+psql bookshelf_test < books.psql
+python test_flaskr.py
+```
+
+All tests are kept in that file and should be maintained as updates are made to app functionality.
+
+## API reference
+
+### Getting Started
+
+-   Base URL: At this stage the application is hosted only locally. The backend app is hosted at the default, `http://127.0.0.1:5000/`, which is set as a proxy in the frontend configuration.
+-   Authentication: None.
+
+### Error Handling
+
+Errors are returned as JSON, like this:
+
+>{  
+'error': 404,
+'message' 'resource not found'
+}	
+
+You can expect:
+-	*400 bad request* if there is no JSON in the request body, when required
+-	*404 resource not found*
+-	*422 unprocessable entity* if JSON was recognized, but the keys were faulty
+
+### Endpoints
+**GET /categories** 
+-	Returns a dictionary, where the key-value pairs represent individual categories as {'id': 'type'}
+
+-	Example:
+
+	`curl http://localhost:5000/categories`
+>{
+  "1": "Science", 
+  "2": "Art", 
+  "3": "Geography", 
+  "4": "History", 
+  "5": "Entertainment", 
+  "6": "Sports"
+}
+
+**GET /questions?page=int** 
+-	Returns a dictionary, with keys:
+		-	**categories** dict, same as result from GET /categories
+		-	**current_category** empty dict, not implemented
+		-	**questions** list of dicts, every dict represents a question as described in POST /questions
+		-	**total_questions** int
+-	Questions are paginated with 10 per page, query accepts page=int, default 1
+
+-	Example (shortened from 10 questions):
+
+	`curl http://localhost:5000/questions?page=2`
+> {
+>   "categories": {
+>     "1": "Science", 
+>     "2": "Art", 
+>     "3": "Geography", 
+>     "4": "History", 
+>     "5": "Entertainment", 
+>     "6": "Sports"
+>   }, 
+>   "current_category": {}, 
+>   "questions": [
+>     {
+>       "answer": "Agra", 
+>       "category": 3, 
+>       "difficulty": 2, 
+>       "id": 15, 
+>       "question": "The Taj Mahal is located in which Indian city?"
+>     }, 
+>     {
+>       "answer": "Escher", 
+>       "category": 2, 
+>       "difficulty": 1, 
+>       "id": 16, 
+>       "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
+>     },  
+>     {...}
+>   ], 
+>   "total_questions": 20
+> } 
+
+**GET /categories/<int: category_id>/questions** 
+
+-	Takes the id of a category and returns a list of its question objects and the total amount of questions.
+-	Example:
+
+	`curl http://localhost:5000/categories/3/questions`
+> {
+>   "current_category": {}, 
+>   "questions": [
+>     {
+>       "answer": "Lake Victoria", 
+>       "category": 3, 
+>       "difficulty": 2, 
+>       "id": 13, 
+>       "question": "What is the largest lake in Africa?"
+>     }, 
+>     {
+>       "answer": "The Palace of Versailles", 
+>       "category": 3, 
+>       "difficulty": 3, 
+>       "id": 14, 
+>       "question": "In which royal palace would you find the Hall of Mirrors?"
+>     }, 
+>     {
+>       "answer": "Agra", 
+>       "category": 3, 
+>       "difficulty": 2, 
+>       "id": 15, 
+>       "question": "The Taj Mahal is located in which Indian city?"
+>     }
+>   ], 
+>   "total_questions": 20
+> }
+
+
+**POST /questions/search** 
+-	Searches through the 'question' of each question object and returns a list of case-insensitive matches or empty if none found.
+-	Accepts JSON:
+> {
+> 	'searchTerm': str
+> }
+
+-	Example:
+
+	`curl -X POST -H 'Content-Type: application/json' http://localhost:5000/questions/search -d '{"searchTerm": "which dung beetle"}'`
+> {
+>   "current_category": {}, 
+>   "questions": [
+>     {
+>       "answer": "Scarab", 
+>       "category": 4, 
+>       "difficulty": 4, 
+>       "id": 23, 
+>       "question": "Which dung beetle was worshipped by the ancient Egyptians?"
+>     }
+>   ], 
+>   "total_questions": 20
+> }
+
+**POST /questions** 
+-	Adds a new question to the database, with required keys as follows.
+-	Accepts JSON:
+> {
+> 	'question': str,
+> 	'answer': str,
+> 	'category': int,
+> 	'difficulty': int
+> }
+
+-	Example:
+
+	`curl -X POST -H 'Content-Type: application/json' http://localhost:5000/questions -d '{"question": "What does the fox say?", "answer": "ring-ding-ding", "category": 1, "difficulty": 5}'`
+> {
+>   "success": true
+> }
+
+**POST /quizzes** 
+-	Takes a list of previous question ids as well as a dict of quiz_category type and id, then returns a random unasked question object.
+-	Accepts JSON:
+> {
+> 	'previous_questions': list of ints,
+> 	'quiz_category': {'type': str, 'id': int}
+> }
+
+-	Example:
+
+	`curl -X POST -H 'Content-Type: application/json' http://localhost:5000/quizzes -d '{"previous_questions": [23, 22], "quiz_category": {"type": "Science", "id": 1}}'`
+> {
+>   "question": {
+>     "answer": "The Liver", 
+>     "category": 1, 
+>     "difficulty": 4, 
+>     "id": 20, 
+>     "question": "What is the heaviest organ in the human body?"
+>   }
+> }
+
+
+**DELETE /questions/<int: question_id>** 
+-	Deletes a question from the database by its id.
+-	Returns 404 if no id found.
+
+-	Example:
+
+	`curl -X DELETE -H 'Content-Type: application/json' http://localhost:5000/questions/23`
+> {
+>   "success": true
+> }
+	
+### Authors
+Felix Weidenholzer
+
+### Acknowledgments
+The frontend as well as the setup come from the team at udacity, the documentation is excessively inspired by Coach Caryn and google search is great.
