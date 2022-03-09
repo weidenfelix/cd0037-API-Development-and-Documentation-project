@@ -175,7 +175,7 @@ You can expect:
 
 ```
 {
-	'searchTerm': str
+  'searchTerm': str
 }
 ```
 
@@ -205,10 +205,10 @@ You can expect:
 
 ```
 {
-	'question': str,
-	'answer': str,
-	'category': int,
-	'difficulty': int
+  'question': str,
+  'answer': str,
+  'category': int,
+  'difficulty': int
 }
 ```
 
@@ -228,8 +228,8 @@ You can expect:
 
 ```
 {
-	'previous_questions': list of ints,
-	'quiz_category': {'type': str, 'id': int}
+  'previous_questions': list of ints,
+  'quiz_category': {'type': str, 'id': int}
 }
 ```
 
